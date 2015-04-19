@@ -11,20 +11,14 @@
 LabirintWidget::LabirintWidget(QWidget *parent) :
     QWidget(parent)
 {
-    m_labirint = new Labirint(20, 20);
+    int w = 40;
+    int h = 30;
+    m_labirint = new Labirint(w, h);
 
-    for (int i = 0; i < 20; ++i) {
-        for (int j = 0; j < 20; ++j) {
-            Place &place = m_labirint->place(i, j);
-            if (qrand() % 10 < 2)
-                place.topWall = true;
-            if (qrand() % 10 < 2)
-                place.leftWall = true;
-        }
-    }
+    m_labirint->generate();
 
-    m_labirint->setCurrent(qrand() % 20, qrand() % 20);
-    m_labirint->setExit(qrand() % 20, qrand() % 20);
+    m_labirint->setCurrent(rand() % w, rand() % h);
+    m_labirint->setExit(rand() % w, rand() % h);
 
     setFocusPolicy(Qt::StrongFocus);
 }

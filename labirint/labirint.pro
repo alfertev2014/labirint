@@ -13,7 +13,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwidget.cpp \
+	mainwidget.cpp \
     labirint.cpp \
     labirintwidget.cpp
 

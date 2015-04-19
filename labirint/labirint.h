@@ -17,6 +17,8 @@ public:
     Labirint(int width, int height);
     ~Labirint();
 
+    void generate();
+
     int width() const { return m_width; }
     int height() const { return m_height; }
     int currentX() const { return m_currentX; }
