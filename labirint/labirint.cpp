@@ -14,6 +14,12 @@ Labirint::Labirint(int width, int height) :
     m_places = new Place*[width];
     for (int i = 0; i < width; ++i)
         m_places[i] = new Place[height];
+    m_traces = new Trace*[width];
+    for (int i = 0; i < width; ++i) {
+        m_traces[i] = new Trace[height];
+        for (int j = 0; j < height; ++j)
+            m_traces[i][j] = PlaceNotVisited;
+    }
 }
 
 Labirint::~Labirint()
@@ -21,6 +27,9 @@ Labirint::~Labirint()
     for (int i = 0; i < m_width; ++i)
         delete [] m_places[i];
     delete [] m_places;
+    for (int i = 0; i < m_width; ++i)
+        delete [] m_traces[i];
+    delete [] m_traces;
 }
 
 void printTags(const std::vector<int> &tags)
@@ -112,6 +121,7 @@ bool Labirint::moveUp()
 {
     if (m_currentY == 0 || currentPlace().topWall)
         return false;
+    markTrace(upTrace());
     m_currentY--;
     return true;
 }
@@ -120,6 +130,7 @@ bool Labirint::moveDown()
 {
     if (m_currentY == m_height - 1 || downPlace().topWall)
         return false;
+    markTrace(downTrace());
     m_currentY++;
     return true;
 }
@@ -128,6 +139,7 @@ bool Labirint::moveLeft()
 {
     if (m_currentX == 0 || currentPlace().leftWall)
         return false;
+    markTrace(leftTrace());
     m_currentX--;
     return true;
 }
@@ -136,6 +148,12 @@ bool Labirint::moveRight()
 {
     if (m_currentX == m_width - 1 || rightPlace().leftWall)
         return false;
+    markTrace(rightTrace());
     m_currentX++;
     return true;
+}
+
+void Labirint::markTrace(const Trace &nextTrace)
+{
+    currentTrace() = nextTrace == PlacePath ? PlaceVisited : PlacePath;
 }

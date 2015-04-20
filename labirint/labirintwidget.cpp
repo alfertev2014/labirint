@@ -68,6 +68,8 @@ void LabirintWidget::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
+    static const float rectMargin = 2.0f;
+
     for (int i = left; i <= right; ++i) {
         for (int j = top; j <= bottom; ++j) {
             Place &place = m_labirint->place(i, j);
@@ -83,6 +85,21 @@ void LabirintWidget::paintEvent(QPaintEvent *event)
                               begin.y());
                 painter.drawLine(begin, end);
             }
+            if (m_labirint->trace(i, j) != PlaceNotVisited) {
+                QColor traceColor;
+                switch (m_labirint->trace(i, j)) {
+                case PlaceVisited:
+                    traceColor = Qt::darkRed;
+                    break;
+                case PlacePath:
+                    traceColor = Qt::darkGreen;
+                    break;
+                }
+                painter.fillRect((float) i / m_labirint->width() * width() + rectMargin,
+                                 (float) j / m_labirint->height() * height() + rectMargin,
+                                 (float) width() / m_labirint->width() - rectMargin * 2,
+                                 (float) height() / m_labirint->height() - rectMargin * 2, traceColor);
+            }
         }
     }
 
@@ -90,19 +107,19 @@ void LabirintWidget::paintEvent(QPaintEvent *event)
     int exitY = m_labirint->exitY();
 
     if (exitX >= left && exitX <= right && exitY >= top && exitY <= bottom) {
-        painter.fillRect((float) exitX / m_labirint->width() * width() + 2.0f,
-                         (float) exitY / m_labirint->height() * height() + 2.0f,
-                         (float) width() / m_labirint->width() - 2.0f,
-                         (float) height() / m_labirint->height() - 2.0f, Qt::blue);
+        painter.fillRect((float) exitX / m_labirint->width() * width() + rectMargin,
+                         (float) exitY / m_labirint->height() * height() + rectMargin,
+                         (float) width() / m_labirint->width() - rectMargin * 2,
+                         (float) height() / m_labirint->height() - rectMargin * 2, Qt::blue);
     }
 
     int curX = m_labirint->currentX();
     int curY = m_labirint->currentY();
 
     if (curX >= left && curX <= right && curY >= top && curY <= bottom) {
-        painter.fillRect((float) curX / m_labirint->width() * width() + 2.0f,
-                         (float) curY / m_labirint->height() * height() + 2.0f,
-                         (float) width() / m_labirint->width() - 2.0f,
-                         (float) height() / m_labirint->height() - 2.0f, Qt::red);
+        painter.fillRect((float) curX / m_labirint->width() * width() + rectMargin,
+                         (float) curY / m_labirint->height() * height() + rectMargin,
+                         (float) width() / m_labirint->width() - rectMargin * 2,
+                         (float) height() / m_labirint->height() - rectMargin * 2, Qt::red);
     }
 }

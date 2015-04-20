@@ -11,6 +11,13 @@ struct Place
     {}
 };
 
+enum Trace
+{
+    PlaceNotVisited,
+    PlaceVisited,
+    PlacePath
+};
+
 class Labirint
 {
 public:
@@ -35,6 +42,7 @@ public:
     bool moveRight();
 
     Place &place(int x, int y) { return m_places[x][y]; }
+    Trace trace(int x, int y) { return m_traces[x][y]; }
     const Place &currentPlace() const { return m_places[m_currentX][m_currentY]; }
     bool atExit() const { return m_currentX == m_exitX && m_currentY == m_exitY; }
 private:
@@ -45,6 +53,15 @@ private:
     int m_exitX;
     int m_exitY;
     Place **m_places;
+    Trace **m_traces;
+
+    Trace &currentTrace() const { return m_traces[m_currentX][m_currentY]; }
+    const Trace &upTrace() const { return m_traces[m_currentX][m_currentY - 1]; }
+    const Trace &downTrace() const { return m_traces[m_currentX][m_currentY + 1]; }
+    const Trace &leftTrace() const { return m_traces[m_currentX - 1][m_currentY]; }
+    const Trace &rightTrace() const { return m_traces[m_currentX + 1][m_currentY]; }
+
+    void markTrace(const Trace &nextTrace);
 
     const Place &upPlace() const { return m_places[m_currentX][m_currentY - 1]; }
     const Place &downPlace() const { return m_places[m_currentX][m_currentY + 1]; }
