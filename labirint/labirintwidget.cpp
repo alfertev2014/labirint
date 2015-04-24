@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPalette>
 
 #include <QDebug>
 
@@ -20,12 +21,23 @@ LabirintWidget::LabirintWidget(QWidget *parent) :
     m_labirint->setCurrent(rand() % w, rand() % h);
     m_labirint->setExit(rand() % w, rand() % h);
 
+
     setFocusPolicy(Qt::StrongFocus);
+    setAutoFillBackground(true);
+    setBackgroundRole(QPalette::Background);
+    QPalette pal = palette();
+    pal.setColor(QPalette::Background, Qt::black);
+    setPalette(pal);
 }
 
 LabirintWidget::~LabirintWidget()
 {
     delete m_labirint;
+}
+
+int LabirintWidget::heightForWidth(int w) const
+{
+    return w * m_labirint->height() / m_labirint->width();
 }
 
 void LabirintWidget::keyPressEvent(QKeyEvent *event)
@@ -68,7 +80,11 @@ void LabirintWidget::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
-    static const float rectMargin = 2.0f;
+    static QPen pen(QBrush(Qt::lightGray), 2);
+    painter.setPen(pen);
+
+
+    static const int traceRectMargin = 3;
 
     for (int i = left; i <= right; ++i) {
         for (int j = top; j <= bottom; ++j) {
@@ -92,34 +108,36 @@ void LabirintWidget::paintEvent(QPaintEvent *event)
                     traceColor = Qt::darkRed;
                     break;
                 case PlacePath:
-                    traceColor = Qt::darkGreen;
+                    traceColor = Qt::green;
                     break;
                 }
-                painter.fillRect((float) i / m_labirint->width() * width() + rectMargin,
-                                 (float) j / m_labirint->height() * height() + rectMargin,
-                                 (float) width() / m_labirint->width() - rectMargin * 2,
-                                 (float) height() / m_labirint->height() - rectMargin * 2, traceColor);
+                painter.fillRect((float) i / m_labirint->width() * width() + traceRectMargin,
+                                 (float) j / m_labirint->height() * height() + traceRectMargin,
+                                 (float) width() / m_labirint->width() - traceRectMargin * 2,
+                                 (float) height() / m_labirint->height() - traceRectMargin * 2, traceColor);
             }
         }
     }
 
     int exitX = m_labirint->exitX();
     int exitY = m_labirint->exitY();
+    static const int exitRectMargin = 2;
 
     if (exitX >= left && exitX <= right && exitY >= top && exitY <= bottom) {
-        painter.fillRect((float) exitX / m_labirint->width() * width() + rectMargin,
-                         (float) exitY / m_labirint->height() * height() + rectMargin,
-                         (float) width() / m_labirint->width() - rectMargin * 2,
-                         (float) height() / m_labirint->height() - rectMargin * 2, Qt::blue);
+        painter.fillRect((float) exitX / m_labirint->width() * width() + exitRectMargin,
+                         (float) exitY / m_labirint->height() * height() + exitRectMargin,
+                         (float) width() / m_labirint->width() - exitRectMargin * 2,
+                         (float) height() / m_labirint->height() - exitRectMargin * 2, Qt::cyan);
     }
 
     int curX = m_labirint->currentX();
     int curY = m_labirint->currentY();
+    static const int curRectMargin = 2;
 
     if (curX >= left && curX <= right && curY >= top && curY <= bottom) {
-        painter.fillRect((float) curX / m_labirint->width() * width() + rectMargin,
-                         (float) curY / m_labirint->height() * height() + rectMargin,
-                         (float) width() / m_labirint->width() - rectMargin * 2,
-                         (float) height() / m_labirint->height() - rectMargin * 2, Qt::red);
+        painter.fillRect((float) curX / m_labirint->width() * width() + curRectMargin,
+                         (float) curY / m_labirint->height() * height() + curRectMargin,
+                         (float) width() / m_labirint->width() - curRectMargin * 2,
+                         (float) height() / m_labirint->height() - curRectMargin * 2, Qt::magenta);
     }
 }

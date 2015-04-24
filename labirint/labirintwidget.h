@@ -11,6 +11,9 @@ public:
     explicit LabirintWidget(QWidget *parent = 0);
     ~LabirintWidget();
 
+    int heightForWidth(int w) const;
+    bool hasHeightForWidth() const { return true; }
+
 protected:
     void keyPressEvent(QKeyEvent *event);
     void paintEvent(QPaintEvent *event);

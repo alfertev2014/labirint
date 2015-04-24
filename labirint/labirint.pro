@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
 	mainwidget.cpp \
     labirint.cpp \
-    labirintwidget.cpp
+    labirintwidget.cpp \
+    constaspectratiolayout.cpp
 
 HEADERS  += mainwidget.h \
     labirint.h \
-    labirintwidget.h
+    labirintwidget.h \
+    constaspectratiolayout.h
 
 FORMS    += mainwidget.ui
