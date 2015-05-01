@@ -18,6 +18,9 @@ public:
     void saveToFile(const QString &fileName);
     void regenerate(int width, int height);
 
+signals:
+    void exitReached();
+
 protected:
     void keyPressEvent(QKeyEvent *event);
     void paintEvent(QPaintEvent *event);

@@ -5,6 +5,7 @@
 #include "constaspectratiolayout.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -13,6 +14,7 @@ MainWidget::MainWidget(QWidget *parent) :
     ui->setupUi(this);
     QLayout *layout = new ConstAspectRatioLayout;
     m_labirintWidget = new LabirintWidget;
+    connect(m_labirintWidget, &LabirintWidget::exitReached, this, &MainWidget::onExitReached);
     QSizePolicy qsp(QSizePolicy::Preferred,QSizePolicy::Preferred);
     qsp.setHeightForWidth(true);
     m_labirintWidget->setSizePolicy(qsp);
@@ -44,4 +46,9 @@ void MainWidget::on_saveButton_clicked()
     QString fileName = QFileDialog::getSaveFileName(this);
     if (!fileName.isEmpty())
         m_labirintWidget->saveToFile(fileName);
+}
+
+void MainWidget::onExitReached()
+{
+    QMessageBox::information(this, "Exit", "You are at exit");
 }

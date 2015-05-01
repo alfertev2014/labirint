@@ -24,6 +24,8 @@ private slots:
 
     void on_saveButton_clicked();
 
+    void onExitReached();
+
 private:
     Ui::MainWidget *ui;
 

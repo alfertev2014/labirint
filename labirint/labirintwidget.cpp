@@ -21,7 +21,6 @@ LabirintWidget::LabirintWidget(QWidget *parent) :
     m_labirint->setCurrent(rand() % w, rand() % h);
     m_labirint->setExit(rand() % w, rand() % h);
 
-
     setFocusPolicy(Qt::StrongFocus);
     setAutoFillBackground(true);
     setBackgroundRole(QPalette::Background);
@@ -86,6 +85,8 @@ void LabirintWidget::keyPressEvent(QKeyEvent *event)
     default:
         QWidget::keyPressEvent(event);
     }
+    if (m_labirint->atExit())
+        emit exitReached();
 }
 
 void LabirintWidget::paintEvent(QPaintEvent *event)
