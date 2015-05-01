@@ -14,6 +14,10 @@ public:
     int heightForWidth(int w) const;
     bool hasHeightForWidth() const { return true; }
 
+    void loadFromFile(const QString &fileName);
+    void saveToFile(const QString &fileName);
+    void regenerate(int width, int height);
+
 protected:
     void keyPressEvent(QKeyEvent *event);
     void paintEvent(QPaintEvent *event);

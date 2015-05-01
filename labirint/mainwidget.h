@@ -17,6 +17,15 @@ public:
     explicit MainWidget(QWidget *parent = 0);
     ~MainWidget();
 
+private slots:
+    void on_generateButton_clicked();
+
+    void on_openButton_clicked();
+
+    void on_saveButton_clicked();
+
 private:
     Ui::MainWidget *ui;
+
+    LabirintWidget *m_labirintWidget;
 };

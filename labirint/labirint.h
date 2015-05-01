@@ -25,6 +25,9 @@ public:
     ~Labirint();
 
     void generate();
+    void generate(int width, int height);
+    void save(const char *fileName) const;
+    void load(const char *filename);
 
     int width() const { return m_width; }
     int height() const { return m_height; }
@@ -42,7 +45,9 @@ public:
     bool moveRight();
 
     Place &place(int x, int y) { return m_places[x][y]; }
+    const Place &place(int x, int y) const { return m_places[x][y]; }
     Trace trace(int x, int y) { return m_traces[x][y]; }
+    const Trace trace(int x, int y) const { return m_traces[x][y]; }
     const Place &currentPlace() const { return m_places[m_currentX][m_currentY]; }
     bool atExit() const { return m_currentX == m_exitX && m_currentY == m_exitY; }
 private:
@@ -67,5 +72,8 @@ private:
     const Place &downPlace() const { return m_places[m_currentX][m_currentY + 1]; }
     const Place &leftPlace() const { return m_places[m_currentX - 1][m_currentY]; }
     const Place &rightPlace() const { return m_places[m_currentX + 1][m_currentY]; }
+
+    void deleteArrays();
+    void createArrays(int width, int height);
 };
 

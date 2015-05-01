@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <stdlib.h>
 
 Labirint::Labirint(int width, int height) :
@@ -11,25 +12,12 @@ Labirint::Labirint(int width, int height) :
     m_exitX(0),
     m_exitY(0)
 {
-    m_places = new Place*[width];
-    for (int i = 0; i < width; ++i)
-        m_places[i] = new Place[height];
-    m_traces = new Trace*[width];
-    for (int i = 0; i < width; ++i) {
-        m_traces[i] = new Trace[height];
-        for (int j = 0; j < height; ++j)
-            m_traces[i][j] = PlaceNotVisited;
-    }
+    createArrays(width, height);
 }
 
 Labirint::~Labirint()
 {
-    for (int i = 0; i < m_width; ++i)
-        delete [] m_places[i];
-    delete [] m_places;
-    for (int i = 0; i < m_width; ++i)
-        delete [] m_traces[i];
-    delete [] m_traces;
+    deleteArrays();
 }
 
 void printTags(const std::vector<int> &tags)
@@ -41,6 +29,8 @@ void printTags(const std::vector<int> &tags)
 
 void Labirint::generate()
 {
+    if (!m_places)
+        return;
     std::vector<Place> column(m_height);
     std::vector<int> tags(m_height);
     int nextTag = m_height;
@@ -101,6 +91,76 @@ void Labirint::generate()
     }
 }
 
+void Labirint::generate(int width, int height)
+{
+    deleteArrays();
+    createArrays(width, height);
+    generate();
+}
+
+void Labirint::save(const char *fileName) const
+{
+    if (!m_places)
+        return;
+    std::fstream f(fileName, std::ios_base::out);
+    if (!f.is_open())
+        return;
+    f << m_width << std::endl;
+    f << m_height << std::endl;
+    f << m_currentX << std::endl;
+    f << m_currentY << std::endl;
+    f << m_exitX << std::endl;
+    f << m_exitY << std::endl;
+    for (int j = 0; j < m_height; ++j) {
+        for (int i = 0; i < m_width; ++i) {
+            f.put(place(i, j).leftWall ? '|' : ' ');
+            f.put(place(i, j).topWall ? '^' : ' ');
+        }
+        f << std::endl;
+    }
+}
+
+void Labirint::load(const char *filename)
+{
+    std::fstream f(filename, std::ios_base::in);
+    if (!f.is_open())
+        return;
+
+    deleteArrays();
+    f >> m_width >> m_height;
+    if (m_width <= 0 || m_height <= 0)
+        return;
+    createArrays(m_width, m_height);
+
+    f >> m_currentX >> m_currentY >> m_exitX >> m_exitY;
+
+    if (m_currentX < 0) m_currentX = 0;
+    if (m_currentX >= m_width) m_currentX = m_width - 1;
+    if (m_currentY < 0) m_currentY = 0;
+    if (m_currentY >= m_height) m_currentY = m_height - 1;
+    if (m_exitX < 0) m_exitX = 0;
+    if (m_exitX >= m_width) m_exitX = m_width - 1;
+    if (m_exitY < 0) m_exitY = 0;
+    if (m_exitY >= m_height) m_exitY = m_height - 1;
+
+    std::string line;
+    while (!f.eof() && line.empty())
+        std::getline(f, line);
+
+    for (int j = 0; j < m_height; ++j) {
+        int len = line.size() / 2;
+        if (len > m_width)
+            len = m_width;
+        for (int i = 0; i < len; ++i) {
+            place(i, j).leftWall = line[2 * i] == '|';
+            place(i, j).topWall = line[2 * i + 1] == '^';
+        }
+        if (f.eof())
+            break;
+        std::getline(f, line);
+    }
+}
+
 void Labirint::setCurrent(int x, int y)
 {
     if (x < 0 || x >= m_width || y < 0 || y >= m_height)
@@ -156,4 +216,35 @@ bool Labirint::moveRight()
 void Labirint::markTrace(const Trace &nextTrace)
 {
     currentTrace() = nextTrace == PlacePath ? PlaceVisited : PlacePath;
+}
+
+void Labirint::deleteArrays()
+{
+    if (m_places) {
+        for (int i = 0; i < m_width; ++i)
+            delete [] m_places[i];
+        delete [] m_places;
+        m_places = 0;
+    }
+    if (m_traces) {
+        for (int i = 0; i < m_width; ++i)
+            delete [] m_traces[i];
+        delete [] m_traces;
+        m_traces = 0;
+    }
+}
+
+void Labirint::createArrays(int width, int height)
+{
+    m_places = new Place*[width];
+    for (int i = 0; i < width; ++i)
+        m_places[i] = new Place[height];
+    m_traces = new Trace*[width];
+    for (int i = 0; i < width; ++i) {
+        m_traces[i] = new Trace[height];
+        for (int j = 0; j < height; ++j)
+            m_traces[i][j] = PlaceNotVisited;
+    }
+    m_width = width;
+    m_height = height;
 }

@@ -40,6 +40,30 @@ int LabirintWidget::heightForWidth(int w) const
     return w * m_labirint->height() / m_labirint->width();
 }
 
+void LabirintWidget::loadFromFile(const QString &fileName)
+{
+    m_labirint->load(fileName.toStdString().c_str());
+    updateGeometry();
+    update();
+}
+
+void LabirintWidget::saveToFile(const QString &fileName)
+{
+    m_labirint->save(fileName.toStdString().c_str());
+    updateGeometry();
+    update();
+}
+
+void LabirintWidget::regenerate(int width, int height)
+{
+    m_labirint->generate(width, height);
+
+    m_labirint->setCurrent(rand() % width, rand() % height);
+    m_labirint->setExit(rand() % width, rand() % height);
+    updateGeometry();
+    update();
+}
+
 void LabirintWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
